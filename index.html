@@ -11,7 +11,7 @@
 .wrap{max-width:1050px;margin:auto;padding:18px}.head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}.title{font-size:25px;font-weight:800}.sub{color:var(--muted);font-size:13px}
 .badge{padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#0c1422;font-size:12px}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{background:rgba(17,24,39,.92);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 8px 30px #0004}.label{font-size:12px;color:var(--muted)}.value{font-size:23px;font-weight:800;margin-top:5px}.green{color:var(--green)}.red{color:var(--red)}.yellow{color:var(--yellow)}.blue{color:var(--blue)}
-.section{margin-top:12px}.section h2{font-size:16px;margin:0 0 10px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.field input,.field select{width:100%;background:#0a1120;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:10px;font-size:14px}
+.section{margin-top:12px}.section h2{font-size:16px;margin:0 0 10px}.controls{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.field input,.field select{width:100%;background:#0a1120;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:10px;font-size:14px}
 button{border:0;border-radius:10px;padding:11px 13px;background:#1b6cff;color:white;font-weight:750;cursor:pointer}.secondary{background:#172235;border:1px solid var(--line)}.danger{background:#7f2434}.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .status{margin-top:10px;padding:12px;border-radius:12px;background:#0a1120;border:1px solid var(--line);font-size:13px}.small{font-size:12px;color:var(--muted)}
 canvas{width:100%;height:260px;background:#0a1120;border:1px solid var(--line);border-radius:12px;margin-top:10px}
@@ -22,79 +22,122 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;borde
 @media(max-width:430px){.grid,.controls,.kpi{grid-template-columns:1fr 1fr}.grid .card:nth-child(1){grid-column:span 2}.controls .field:last-child{grid-column:span 2}}
 </style>
 </head>
+
 <body>
 <div class="wrap">
   <div class="head">
-    <div><div class="title">📊 Volume Lab</div><div class="sub">ETH/USDC • volum + preț • simulator istoric</div></div>
+    <div>
+      <div class="title">📊 Volume Lab v2</div>
+      <div class="sub">Paper Trading • o singură lumânare • volum + preț • fără ordine reale</div>
+    </div>
     <div id="conn" class="badge">⚪ Offline</div>
   </div>
 
   <div class="grid">
     <div class="card"><div class="label">Preț live</div><div id="price" class="value">—</div></div>
-    <div class="card"><div class="label">Volum curent (quote)</div><div id="liveVol" class="value">—</div></div>
+    <div class="card"><div class="label">Volum lumânare curentă</div><div id="liveVol" class="value">—</div></div>
     <div class="card"><div class="label">Volum 24h Binance</div><div id="vol24" class="value">—</div></div>
-    <div class="card"><div class="label">Semnal</div><div id="signal" class="value yellow">AȘTEPT</div></div>
+    <div class="card"><div class="label">Semnal volum</div><div id="signal" class="value yellow">AȘTEPT</div></div>
   </div>
 
   <div class="section card">
-    <h2>⚙️ Setări</h2>
+    <h2>⚙️ Setări strategie</h2>
     <div class="controls">
       <div class="field"><label>Symbol</label><input id="symbol" value="ETHUSDC"></div>
-      <div class="field"><label>Timeframe</label><select id="tf"><option value="1d">1D</option><option value="4h">4H</option><option value="1h">1H</option><option value="15m">15M</option></select></div>
-      <div class="field"><label>Prag volum ziua/candela 1 (USDC)</label><input id="v1" type="number" value="1800000" step="10000"></div>
-      <div class="field"><label>Prag volum ziua/candela 2 (USDC)</label><input id="v2" type="number" value="1100000" step="10000"></div>
-      <div class="field"><label>Regulă semnal</label><select id="rule"><option value="contrarian">Verde → SHORT / Roșie → LONG</option><option value="trend">Verde → LONG / Roșie → SHORT</option></select></div>
-      <div class="field"><label>Număr lumânări istoric</label><input id="limit" type="number" value="90" min="20" max="1000"></div>
-      <div class="field"><label>TP simulare (%)</label><input id="tp" type="number" value="1" step="0.1"></div>
-      <div class="field"><label>SL simulare (%)</label><input id="sl" type="number" value="1" step="0.1"></div>
+      <div class="field"><label>Timeframe</label>
+        <select id="tf"><option value="1d">1D</option><option value="4h">4H</option><option value="1h">1H</option><option value="15m">15M</option></select>
+      </div>
+      <div class="field"><label>Prag volum (USDC)</label><input id="v1" type="number" value="200000000" step="1000000"></div>
+      <div class="field"><label>Regulă culoare</label>
+        <select id="rule">
+          <option value="contrarian">🟢 Verde → SHORT / 🔴 Roșie → LONG</option>
+          <option value="trend">🟢 Verde → LONG / 🔴 Roșie → SHORT</option>
+        </select>
+      </div>
+      <div class="field"><label>Capital paper (USDC)</label><input id="capital" type="number" value="1000" step="10"></div>
+      <div class="field"><label>Mărime poziție (USDC)</label><input id="position" type="number" value="100" step="10"></div>
+      <div class="field"><label>Fee / sens (%)</label><input id="fee" type="number" value="0.04" step="0.01"></div>
+      <div class="field"><label>TP (%)</label><input id="tp" type="number" value="2" step="0.1"></div>
+      <div class="field"><label>SL (%)</label><input id="sl" type="number" value="1" step="0.1"></div>
+      <div class="field"><label>Istoric (lumânări)</label><input id="limit" type="number" value="90" min="20" max="1000"></div>
     </div>
     <div class="row">
       <button id="load">⬇️ Încarcă istoricul Binance</button>
-      <button id="simulate" class="secondary">🧪 Rulează simularea</button>
-      <button id="live" class="secondary">🔔 Pornește monitorizarea</button>
+      <button id="simulate" class="secondary">🧪 Simulează istoric</button>
+      <button id="live" class="secondary">🔔 Monitorizare</button>
       <button id="stop" class="danger">■ Oprește</button>
     </div>
-    <div id="status" class="status">Pregătit. Apasă „Încarcă istoricul Binance”.</div>
+    <div id="status" class="status">Pregătit.</div>
+  </div>
+
+  <div class="section card">
+    <h2>💰 Paper Trading — poziție fictivă</h2>
+    <div class="kpi">
+      <div class="card"><div class="label">Sold paper</div><div id="balance" class="value">—</div></div>
+      <div class="card"><div class="label">Poziție</div><div id="posStatus" class="value yellow">FLAT</div></div>
+      <div class="card"><div class="label">PnL nerealizat</div><div id="unrealized" class="value">0.00 USDC</div></div>
+    </div>
+    <div class="row">
+      <button id="longBtn">🟢 PAPER LONG</button>
+      <button id="shortBtn" class="danger">🔴 PAPER SHORT</button>
+      <button id="closeBtn" class="secondary">✖ Închide poziția</button>
+      <button id="resetBtn" class="secondary">↺ Reset cont</button>
+    </div>
+    <div id="paperStatus" class="status">Nicio poziție deschisă. Tranzacțiile sunt fictive.</div>
   </div>
 
   <div class="section card">
     <h2>📈 Volum istoric</h2>
     <canvas id="chart" width="1000" height="300"></canvas>
-    <div class="small">Bare = quote volume (USDC). Linia galbenă = pragul 1. Dacă vezi semnale, ele sunt marcate pe grafic.</div>
+    <div class="small">Bare = quote volume (USDC). Linia galbenă = pragul de volum. Un semnal folosește DOAR lumânarea respectivă.</div>
   </div>
 
   <div class="section card">
-    <h2>🧪 Rezultatul simulării</h2>
+    <h2>🧪 Rezultatul simulării istorice</h2>
     <div class="kpi">
       <div class="card"><div class="label">Semnale</div><div id="nSignals" class="value">0</div></div>
-      <div class="card"><div class="label">Profit brut simulativ</div><div id="pnl" class="value">0.00%</div></div>
+      <div class="card"><div class="label">PnL net</div><div id="pnl" class="value">0.00 USDC</div></div>
       <div class="card"><div class="label">Win rate</div><div id="win" class="value">0.0%</div></div>
     </div>
+    <div class="small" style="margin-top:8px">Fee-ul este aplicat la intrare și la ieșire. Dacă TP și SL sunt atinse în aceeași lumânare, simularea consideră SL primul (conservator).</div>
     <div class="scroll" style="margin-top:10px">
-      <table><thead><tr><th>Data semnal</th><th>V1</th><th>V2</th><th>Candle 2</th><th>Semnal</th><th>Entry următoarea</th><th>Rezultat</th></tr></thead><tbody id="results"></tbody></table>
+      <table>
+        <thead><tr><th>Data</th><th>Volum</th><th>Candle</th><th>Semnal</th><th>Entry</th><th>Exit</th><th>PnL net</th></tr></thead>
+        <tbody id="results"></tbody>
+      </table>
     </div>
   </div>
 
   <div class="section card">
     <h2>🔔 Alertă live</h2>
     <div id="alertBox" class="status">Monitorizarea este oprită.</div>
-    <div class="small" style="margin-top:8px">În această versiune alerta este locală (sunet + notificare dacă browserul o permite). Nu există cheie API și botul NU plasează ordine.</div>
+    <div class="small" style="margin-top:8px">Această versiune NU trimite ordine la Binance. Paper Trading este doar simulare locală.</div>
   </div>
 
   <div class="footer">
-    Datele publice sunt citite direct din API-ul public Binance din browser. Quote volume este volumul exprimat în moneda de cotare (pentru ETH/USDC, USDC). 
-    Simulatorul folosește o regulă fără look-ahead: semnalul se formează după închiderea celei de-a doua lumânări, iar intrarea simulată este la deschiderea următoarei.
-    Acesta este un instrument de cercetare, nu o recomandare de tranzacționare.
+    Datele sunt citite din API-ul public Binance. Quote volume = volumul în moneda de cotare (USDC).
+    Paper Trading nu folosește cheia API și nu poate cheltui bani reali.
   </div>
 </div>
 
 <script>
 const $=id=>document.getElementById(id);
 let candles=[], timer=null, audioCtx=null, alertedKey=null;
+let paper={balance:0, position:null, realized:0, trades:0};
 
 function cfg(){
-  return {symbol:$("symbol").value.trim().toUpperCase(),tf:$("tf").value,v1:+$("v1").value,v2:+$("v2").value,
-          rule:$("rule").value,limit:Math.min(1000,Math.max(20,+$("limit").value)),tp:+$("tp").value,sl:+$("sl").value};
+  return {
+    symbol:$("symbol").value.trim().toUpperCase(),
+    tf:$("tf").value,
+    v1:+$("v1").value,
+    rule:$("rule").value,
+    capital:+$("capital").value,
+    position:+$("position").value,
+    fee:+$("fee").value,
+    tp:+$("tp").value,
+    sl:+$("sl").value,
+    limit:Math.min(1000,Math.max(20,+$("limit").value))
+  };
 }
 function fmt(n){if(!isFinite(n))return "—";return new Intl.NumberFormat("de-DE",{maximumFractionDigits:2}).format(n)}
 function money(n){return fmt(n)+" USDC"}
@@ -105,34 +148,35 @@ async function api(path){
   if(!r.ok) throw new Error("Binance HTTP "+r.status);
   return r.json();
 }
-async function checkSymbol(){
-  const c=cfg();
-  const x=await api("/api/v3/exchangeInfo?symbol="+encodeURIComponent(c.symbol));
-  if(!x.symbols || !x.symbols.length) throw new Error("Symbolul nu este disponibil pe Binance Spot: "+c.symbol);
-}
 async function liveOnce(){
   const c=cfg();
   try{
     const [t,k]=await Promise.all([
-      api("/api/v3/ticker/24hr?symbol="+c.symbol),
-      api("/api/v3/klines?symbol="+c.symbol+"&interval="+c.tf+"&limit=1")
+      api("/api/v3/ticker/24hr?symbol="+encodeURIComponent(c.symbol)),
+      api("/api/v3/klines?symbol="+encodeURIComponent(c.symbol)+"&interval="+c.tf+"&limit=1")
     ]);
-    $("price").textContent=fmt(+t.lastPrice);
+    const price=+t.lastPrice, q=+k[0][7], o=+k[0][1], cl=+k[0][4];
+    $("price").textContent=fmt(price);
     $("vol24").textContent=money(+t.quoteVolume);
-    const q=+k[0][7];
     $("liveVol").textContent=money(q);
     $("conn").textContent="🟢 Live";
-    const v2=q, o=+k[0][1], cl=+k[0][4];
-    if(v2>=c.v2){
-      const sig=(cl>=o) ? (c.rule==="contrarian"?"SHORT":"LONG") : (c.rule==="contrarian"?"LONG":"SHORT");
-      $("signal").textContent=sig;
-      $("signal").className="value "+(sig==="LONG"?"green":"red");
-      const key=c.symbol+"-"+c.tf+"-"+k[0][0];
-      if(alertedKey!==key){ alertSound(); alertedKey=key; $("alertBox").textContent="🔔 Prag depășit: "+money(v2)+" • "+sig+" • "+date(k[0][0]); }
-    } else {
-      $("signal").textContent="AȘTEPT";
-      $("signal").className="value yellow";
+
+    const green=cl>=o;
+    let sig=null;
+    if(q>=c.v1) sig=green ? (c.rule==="contrarian"?"SHORT":"LONG") : (c.rule==="contrarian"?"LONG":"SHORT");
+    $("signal").textContent=sig||"AȘTEPT";
+    $("signal").className="value "+(sig==="LONG"?"green":sig==="SHORT"?"red":"yellow");
+
+    if(sig){
+      const key=c.symbol+"-"+c.tf+"-"+k[0][0]+"-"+sig;
+      if(alertedKey!==key){
+        alertSound(); alertedKey=key;
+        $("alertBox").textContent="🔔 VOLUM PESTE PRAG • "+money(q)+" • "+(green?"🟢":"🔴")+" • "+sig+" • "+date(k[0][0]);
+      }
+    }else{
+      $("alertBox").textContent="Monitorizare • volum "+money(q)+" / prag "+money(c.v1);
     }
+    updatePaper(price);
   }catch(e){
     $("conn").textContent="🔴 Eroare";
     $("alertBox").textContent="Eroare live: "+e.message;
@@ -143,77 +187,126 @@ async function loadHistory(){
   const c=cfg();
   setStatus("Se încarcă "+c.limit+" lumânări de la Binance…");
   try{
-    await checkSymbol();
-    const data=await api("/api/v3/klines?symbol="+c.symbol+"&interval="+c.tf+"&limit="+c.limit);
+    const data=await api("/api/v3/klines?symbol="+encodeURIComponent(c.symbol)+"&interval="+c.tf+"&limit="+c.limit);
     candles=data.map(x=>({t:+x[0],o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[5],q:+x[7]}));
     setStatus("Gata: "+candles.length+" lumânări încărcate. Ultima: "+date(candles.at(-1).t));
-    draw();
-    liveOnce();
+    draw(); await liveOnce();
   }catch(e){setStatus("Nu am putut încărca datele: "+e.message)}
 }
 function signalFor(i,c){
-  if(i<1)return null;
-  const a=candles[i-1], b=candles[i];
-  if(a.q<c.v1 || b.q<c.v2)return null;
+  if(i<0)return null;
+  const b=candles[i];
+  if(b.q<c.v1)return null;
   const green=b.c>=b.o;
-  return {side: green ? (c.rule==="contrarian"?"SHORT":"LONG") : (c.rule==="contrarian"?"LONG":"SHORT"), a,b};
+  return {side:green?(c.rule==="contrarian"?"SHORT":"LONG"):(c.rule==="contrarian"?"LONG":"SHORT"), b};
 }
+function feeAmount(notional,c){return notional*(c.fee/100)}
 function simulate(){
-  const c=cfg(); if(candles.length<3){setStatus("Încarcă întâi istoricul.");return}
+  const c=cfg();
+  if(candles.length<3){setStatus("Încarcă întâi istoricul.");return}
   const rows=[]; let total=0,wins=0;
-  for(let i=1;i<candles.length-1;i++){
+  for(let i=0;i<candles.length-1;i++){
     const s=signalFor(i,c); if(!s)continue;
-    const entry=candles[i+1].o;
-    const next=candles[i+1];
-    // Conservative bar-only approximation: if both TP and SL are touched, count SL first.
-    let ret=(next.c-entry)/entry*100;
-    const tp=c.tp, sl=c.sl;
-    if(s.side==="SHORT") ret=-ret;
-    if(tp>0 || sl>0){
-      const hitTP = s.side==="LONG" ? next.h>=entry*(1+tp/100) : next.l<=entry*(1-tp/100);
-      const hitSL = s.side==="LONG" ? next.l<=entry*(1-sl/100) : next.h>=entry*(1+sl/100);
-      if(hitSL) ret=-sl; else if(hitTP) ret=tp;
+    const entry=candles[i+1].o, next=candles[i+1];
+    let exit=next.c, retPct=s.side==="LONG"?((exit-entry)/entry*100):((entry-exit)/entry*100);
+    if(c.tp>0 || c.sl>0){
+      const hitTP=s.side==="LONG"?next.h>=entry*(1+c.tp/100):next.l<=entry*(1-c.tp/100);
+      const hitSL=s.side==="LONG"?next.l<=entry*(1-c.sl/100):next.h>=entry*(1+c.sl/100);
+      if(hitSL){exit=s.side==="LONG"?entry*(1-c.sl/100):entry*(1+c.sl/100);retPct=-c.sl}
+      else if(hitTP){exit=s.side==="LONG"?entry*(1+c.tp/100):entry*(1-c.tp/100);retPct=c.tp}
     }
-    total+=ret; if(ret>0)wins++;
-    rows.push({s,entry,ret});
+    const gross=c.position*(retPct/100);
+    const fees=feeAmount(c.position,c)*2;
+    const net=gross-fees;
+    total+=net;if(net>0)wins++;
+    rows.push({s,entry,exit,net});
   }
   $("nSignals").textContent=rows.length;
-  $("pnl").textContent=(total>=0?"+":"")+total.toFixed(2)+"%";
+  $("pnl").textContent=(total>=0?"+":"")+total.toFixed(2)+" USDC";
   $("pnl").className="value "+(total>=0?"green":"red");
   $("win").textContent=(rows.length?(wins/rows.length*100):0).toFixed(1)+"%";
   $("results").innerHTML=rows.slice().reverse().map(r=>{
     const cls=r.s.side==="LONG"?"signalLong":"signalShort";
-    return `<tr><td>${date(r.s.b.t)}</td><td>${money(r.s.a.q)}</td><td>${money(r.s.b.q)}</td><td>${r.s.b.c>=r.s.b.o?"🟢":"🔴"}</td><td class="${cls}">${r.s.side}</td><td>${fmt(r.entry)}</td><td class="${r.ret>=0?"green":"red"}">${r.ret>=0?"+":""}${r.ret.toFixed(2)}%</td></tr>`
+    return `<tr><td>${date(r.s.b.t)}</td><td>${money(r.s.b.q)}</td><td>${r.s.b.c>=r.s.b.o?"🟢":"🔴"}</td><td class="${cls}">${r.s.side}</td><td>${fmt(r.entry)}</td><td>${fmt(r.exit)}</td><td class="${r.net>=0?"green":"red"}">${r.net>=0?"+":""}${r.net.toFixed(2)} USDC</td></tr>`;
   }).join("");
   draw();
 }
 function draw(){
   const cv=$("chart"),ctx=cv.getContext("2d"),w=cv.width,h=cv.height;
-  ctx.clearRect(0,0,w,h); if(!candles.length)return;
-  const pad=32, max=Math.max(...candles.map(x=>x.q),cfg().v1), barW=(w-pad*2)/candles.length;
+  ctx.clearRect(0,0,w,h);if(!candles.length)return;
+  const c=cfg(),pad=32,max=Math.max(...candles.map(x=>x.q),c.v1),barW=(w-pad*2)/candles.length;
   ctx.strokeStyle="#243149";ctx.fillStyle="#94a3b8";ctx.font="12px system-ui";
   for(let j=0;j<4;j++){let y=pad+(h-pad*1.6)*j/3;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(w-pad,y);ctx.stroke();ctx.fillText(fmt(max*(1-j/3)/1000000)+"M",3,y+4)}
-  candles.forEach((x,i)=>{
-    const bh=(x.q/max)*(h-pad*1.6), y=h-pad-bh;
-    ctx.fillStyle=x.c>=x.o?"#35d07f":"#ff647c";
-    ctx.fillRect(pad+i*barW+1,y,Math.max(1,barW-2),bh);
-  });
-  const yy=h-pad-(cfg().v1/max)*(h-pad*1.6);ctx.strokeStyle="#ffd166";ctx.setLineDash([6,5]);ctx.beginPath();ctx.moveTo(pad,yy);ctx.lineTo(w-pad,yy);ctx.stroke();ctx.setLineDash([]);
+  candles.forEach((x,i)=>{const bh=(x.q/max)*(h-pad*1.6),y=h-pad-bh;ctx.fillStyle=x.c>=x.o?"#35d07f":"#ff647c";ctx.fillRect(pad+i*barW+1,y,Math.max(1,barW-2),bh)});
+  const yy=h-pad-(c.v1/max)*(h-pad*1.6);ctx.strokeStyle="#ffd166";ctx.setLineDash([6,5]);ctx.beginPath();ctx.moveTo(pad,yy);ctx.lineTo(w-pad,yy);ctx.stroke();ctx.setLineDash([]);
 }
+function savePaper(){localStorage.setItem("vl-paper-v2",JSON.stringify(paper))}
+function loadPaper(){
+  try{const x=JSON.parse(localStorage.getItem("vl-paper-v2"));if(x&&typeof x.balance==="number")paper=x}catch(e){}
+  if(!paper.balance)paper.balance=cfg().capital;
+  renderPaper();
+}
+function renderPaper(price){
+  $("balance").textContent=money(paper.balance);
+  const pos=paper.position;
+  $("posStatus").textContent=pos?pos.side+" • "+money(pos.notional):"FLAT";
+  $("posStatus").className="value "+(pos?(pos.side==="LONG"?"green":"red"):"yellow");
+  let pnl=0;
+  if(pos && price){
+    pnl=pos.side==="LONG" ? pos.notional*(price-pos.entry)/pos.entry : pos.notional*(pos.entry-price)/pos.entry;
+  }
+  $("unrealized").textContent=(pnl>=0?"+":"")+pnl.toFixed(2)+" USDC";
+  $("unrealized").className="value "+(pnl>=0?"green":"red");
+}
+function currentPrice(){const x=$("price").textContent.replace(/\./g,"").replace(",",".").replace(/[^\d.-]/g,"");return +x}
+function openPaper(side){
+  const c=cfg(), price=currentPrice();
+  if(!price){$("paperStatus").textContent="Așteaptă prețul live.";return}
+  if(paper.position){$("paperStatus").textContent="Ai deja o poziție deschisă. Închide-o întâi.";return}
+  if(c.position<=0 || c.position>paper.balance){$("paperStatus").textContent="Mărimea poziției trebuie să fie > 0 și <= soldul paper.";return}
+  const fee=feeAmount(c.position,c);
+  paper.balance-=fee;
+  paper.position={side,entry:price,notional:c.position,feeIn:fee,openedAt:Date.now()};
+  paper.trades++;
+  savePaper();renderPaper(price);
+  $("paperStatus").textContent="Deschis PAPER "+side+" la "+fmt(price)+" • fee intrare "+fee.toFixed(2)+" USDC";
+}
+function closePaper(){
+  const c=cfg(),price=currentPrice();
+  if(!paper.position){$("paperStatus").textContent="Nu există poziție.";return}
+  if(!price){$("paperStatus").textContent="Prețul live nu este disponibil.";return}
+  const p=paper.position;
+  const gross=p.side==="LONG"?p.notional*(price-p.entry)/p.entry:p.notional*(p.entry-price)/p.entry;
+  const out=p.notional+gross;
+  const feeOut=feeAmount(out,c);
+  const net=gross-p.feeIn-feeOut;
+  paper.balance+=out-feeOut;
+  paper.realized+=net;
+  paper.position=null;
+  savePaper();renderPaper(price);
+  $("paperStatus").textContent="Închis "+p.side+" la "+fmt(price)+" • PnL net "+(net>=0?"+":"")+net.toFixed(2)+" USDC • fee ieșire "+feeOut.toFixed(2)+" USDC";
+}
+function resetPaper(){
+  const c=cfg();paper={balance:c.capital,position:null,realized:0,trades:0};savePaper();renderPaper();
+  $("paperStatus").textContent="Cont paper resetat la "+money(c.capital)+".";
+}
+function updatePaper(price){renderPaper(price||currentPrice())}
 function alertSound(){
   try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=880;g.gain.value=.08;o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.35)}catch(e){}
-  if("Notification" in window && Notification.permission==="granted") new Notification("Volume Lab",{body:$("alertBox").textContent});
+  if("Notification"in window&&Notification.permission==="granted")new Notification("Volume Lab",{body:$("alertBox").textContent});
 }
 async function startLive(){
-  try{if("Notification" in window && Notification.permission==="default") await Notification.requestPermission()}catch(e){}
-  if(timer)clearInterval(timer); liveOnce(); timer=setInterval(liveOnce,10000);
+  try{if("Notification"in window&&Notification.permission==="default")await Notification.requestPermission()}catch(e){}
+  if(timer)clearInterval(timer);await liveOnce();timer=setInterval(liveOnce,10000);
   $("alertBox").textContent="🟢 Monitorizare activă — verific la 10 secunde.";
 }
-function stop(){if(timer){clearInterval(timer);timer=null} $("conn").textContent="⚪ Oprit"}
+function stop(){if(timer){clearInterval(timer);timer=null}$("conn").textContent="⚪ Oprit"}
 $("load").onclick=loadHistory;$("simulate").onclick=simulate;$("live").onclick=startLive;$("stop").onclick=stop;
-["symbol","tf","v1","v2","rule","limit","tp","sl"].forEach(id=>$(id).addEventListener("change",()=>localStorage.setItem("vl-"+id,$(id).value)));
-["symbol","tf","v1","v2","rule","limit","tp","sl"].forEach(id=>{const v=localStorage.getItem("vl-"+id);if(v!==null)$(id).value=v});
-window.addEventListener("resize",draw);
+$("longBtn").onclick=()=>openPaper("LONG");$("shortBtn").onclick=()=>openPaper("SHORT");$("closeBtn").onclick=closePaper;$("resetBtn").onclick=resetPaper;
+["symbol","tf","v1","rule","capital","position","fee","tp","sl","limit"].forEach(id=>$(id).addEventListener("change",()=>{localStorage.setItem("vl2-"+id,$(id).value);if(id==="capital"&&!paper.position&&paper.balance===0){paper.balance=cfg().capital;savePaper()}if(id==="v1")draw()}));
+["symbol","tf","v1","rule","capital","position","fee","tp","sl","limit"].forEach(id=>{const v=localStorage.getItem("vl2-"+id);if(v!==null)$(id).value=v});
+loadPaper();window.addEventListener("resize",draw);
 </script>
 </body>
+
 </html>
